@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="./style.css" rel="stylesheet">
+    <title>Document</title>
+</head>
+<body>
+    <div id="container" class="grid">
+        <div id="side-bar">
+            <div class="logo"><img src="./assets/double-check.png" alt="logo"><h1>Todo List</h1></div>
+            <ul class="lists-ul">
+                <li class="list-item"><img src="./assets/sunny.png" alt="Sun icon">My day</li>
+                <li class="list-item"><img src="./assets/calendar.png" alt="Calendar icon">My Week</li>
+                <li class="list-item"><img src="./assets/work-done.png" alt="Check icon">Done</li>
+                <li class="list-item new-list-btn"><img src="./assets/plus.png" alt="plus icon">New List</li>
+            </ul>
+        </div>
+        <div id="header">
+            <div class="chosen-list-title">My day</div>
+            <div class="actual-date">Wednesday 11 May</div>
+        </div>
+        <div id="main" class="grid">
+            <div class="task-item priority-high"><div class="check-btn"></div><div class="task-title-field">Task</div><div class="details-btn">details</div><div class="delete-btn"></div></div>
+            <div class="task-item priority-medium"><div class="check-btn"></div><div class="task-title-field">Task</div><div class="details-btn">details</div><div class="delete-btn"></div></div>
+            <div class="task-item priority-low"><div class="check-btn"></div><div class="task-title-field">Task</div><div class="details-btn">details</div><div class="delete-btn"></div></div>
+            <div class="new-task-btn"><img src="./assets/add.png" alt="plus icon">Add a Task</div>
+        </div>
+    </div>
+<script src="main.js"></script>
+</body>
+</html>

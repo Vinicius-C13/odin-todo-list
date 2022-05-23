@@ -8,11 +8,39 @@
     <title>Document</title>
 </head>
 <body>
-    <div id="container" class="grid">
+<div class="new-overlay">
+    <form class="create-new">
+        <div class="create-new--header">Create a new task<div id="close-form-btn"></div></div>
+        <div class="create-new--content">
+            <textarea class="create-new_input" id="new-todo--title" name="new-todo" placeholder="Title: Create a title"></textarea>
+            <textarea class="create-new_input" id="new-todo--description" name="new-todo" placeholder="Details: Add a description"></textarea>
+            <div class="create-new_date">
+                <label for="new-todo--date">Due Date:</label>
+                <input type="date" id="new-todo--date" name="new-todo">
+            </div>
+            <div class="wrap-priority-submit">
+                <div class="new-todo--priority">
+                    <div class="todo-prior-label">Priority:</div>
+                    <label class="radio-label radio-label-low" for="low"><span class="low">low</span>
+                        <input type="radio" id="low" name="new-todo--prior" value="priority-low">
+                    </label>
+                    <label class="radio-label radio-label-medium" for="medium"><span class="medium">medium</span>
+                        <input type="radio" id="medium" name="new-todo--prior" value="priority-medium">
+                    </label>
+                    <label class="radio-label radio-label-high" for="high"><span class="high">high</span>
+                        <input type="radio" id="high" name="new-todo--prior" value="priority-high">
+                    </label>
+                </div>
+                <button>Create</button>
+            </div>
+        </div>
+    </form>
+</div>
+    <div id="content" class="grid">
         <div id="side-bar">
             <div class="logo"><img src="./assets/double-check.png" alt="logo"><h1>Todo List</h1></div>
             <ul class="lists-ul">
-                <li class="list-item"><img src="./assets/sunny.png" alt="Sun icon">My day</li>
+                <li class="list-item" id="my-day-tasks"><img src="./assets/sunny.png" alt="Sun icon">My day</li>
                 <li class="list-item"><img src="./assets/calendar.png" alt="Calendar icon">My Week</li>
                 <li class="list-item"><img src="./assets/work-done.png" alt="Check icon">Done</li>
                 <li class="list-item new-list-btn"><img src="./assets/plus.png" alt="plus icon">New List</li>
@@ -23,10 +51,7 @@
             <div class="actual-date">Wednesday 11 May</div>
         </div>
         <div id="main" class="grid">
-            <div class="task-item priority-high"><div class="check-btn"></div><div class="task-title-field">Task</div><div class="details-btn">details</div><div class="delete-btn"></div></div>
-            <div class="task-item priority-medium"><div class="check-btn"></div><div class="task-title-field">Task</div><div class="details-btn">details</div><div class="delete-btn"></div></div>
-            <div class="task-item priority-low"><div class="check-btn"></div><div class="task-title-field">Task</div><div class="details-btn">details</div><div class="delete-btn"></div></div>
-            <div class="new-task-btn"><img src="./assets/add.png" alt="plus icon">Add a Task</div>
+            <div class="new-task-card"><img class="new-task-btn" src="./assets/add.png" alt="plus icon">Add a Task</div>
         </div>
     </div>
 <script src="main.js"></script>

@@ -49,7 +49,7 @@ section {margin-top: 2rem;}
     display: grid;
 }
 
-#container {
+#content {
     min-height: 100vh;
     grid-template: 25vh auto / minmax(250px, 1fr) minmax(300px, 2.8fr);
     grid-template-areas: 'sidebar header'
@@ -130,12 +130,12 @@ li {
 #main {
     grid-area: main;
     grid-auto-rows: 80px;
-    background-color: rgb(221, 220, 220);
+    background-color: #dddcdc;
     gap: 5px;
     padding-top: 5px;
 }
 
-.task-item, .new-task-btn {
+.task-item, .new-task-card {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -148,26 +148,28 @@ li {
     position: relative;
 }
 
-.new-task-btn {
+.new-task-card {
     justify-content: left;
+    border-left: 5px solid #ffffff;
+    border-radius: 7px;
 }
 
 .priority-high {
-    border-left: 5px solid rgb(250, 56, 56);
-    border-radius: 5px;
+    border-left: 5px solid #fa3838;
+    border-radius: 7px;
 }
 
 .priority-medium {
-    border-left: 5px solid rgb(252, 224, 102);
-    border-radius: 5px;
+    border-left: 5px solid #ccac1d;
+    border-radius: 7px;
 }
 
 .priority-low {
-    border-left: 5px solid rgb(109, 248, 109);
-    border-radius: 5px;
+    border-left: 5px solid #16b416;
+    border-radius: 7px;
 }
 
-.new-task-btn {
+.new-task-card {
     color: #5d9963;
 }
 
@@ -178,20 +180,33 @@ li {
     border: 3px solid #5d9963;
 }
 
-.task-title-field {
+.main-task-infos {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    max-height: 45px;
     width: 100%;
+    column-gap: 10px;
+    white-space: nowrap;
 }
 
-.details-btn {
-    min-width: 55px;
-    height: 25px;
-    border: 1px solid #5d9963;
+.details {
+    color: #525252;
+    font-size: .9rem;
+}
+
+.date {
+    color: #525252;
+    font-size: .9rem;
+    min-width: auto;
+    white-space: nowrap;
+    border: 2px solid #5d9963;
+    background-color: #5d9963;
+    color: white;
+    font-weight: 700;
+    padding: 3px;
+    padding-inline: 5px;
     border-radius: 5px;
-    color: #5d9963;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    margin-right: 20px;
 }
 
 .delete-btn {
@@ -201,7 +216,155 @@ li {
     background-color: #5d9963;
 }
 
+.new-overlay {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(255, 255, 255, .5);
+    backdrop-filter: blur(1px);
+    height: 100vh;
+    width: 100vw;
+    z-index: 100;
+}
 
+.show-task-form {
+    position: fixed;
+    display: flex;
+}
 
+.create-new {
+    width: clamp(380px, 50%, 540px);
+    background-color:#dddcdc;
+    box-shadow: 0px 0px 12px 2px #2b2b2b;
+}
 
+.create-new--header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #5d9963;
+    color: white;
+    font-size: 1.3rem;
+    padding: 5px;
+    padding-inline:20px;
+}
+
+#close-form-btn {
+    width: 18px;
+    height: 18px;
+    aspect-ratio: 1;
+    clip-path: polygon(20% 0%, 0% 20%, 30% 50%, 0% 80%, 20% 100%, 50% 70%, 80% 100%, 100% 80%, 70% 50%, 100% 20%, 80% 0%, 50% 30%);
+    background-color: #000000;
+}
+
+.create-new--content {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    gap: 10px;
+}
+
+#new-todo--title {
+    height: 30px;
+}
+
+#new-todo--description {
+    height: 100px;
+}
+
+.create-new_date {
+    display: flex;
+}
+
+.create-new_date > label {
+    width: 80px;
+}
+
+.todo-prior-label {
+    width: 80px;
+}
+
+.wrap-priority-submit {
+    display: flex;
+    justify-content: space-between;
+}
+
+.create-new_priority {
+    display: flex;
+}
+
+.new-todo--priority {
+    display: flex;
+    align-items: center;
+}
+
+input[type="radio"] {
+    width: 60px;
+    height: 25px;
+    border-radius: 5px;
+    border: 2px solid;
+    background-color: white;
+    margin: 0;
+    border-color: inherit;
+    -webkit-appearance: none; /*to disable the default appearance of radio button*/
+    -moz-appearance: none;
+}
+
+.radio-label-low {
+    color: #16b416;
+    border-color: #16b416
+}
+
+input:checked {
+    background-color: #00fff2;
+}
+
+.low:hover {
+    color: #ffffff;
+    background-color: #16b416;
+}
+
+.medium:hover {
+    color: #ffffff;
+    background-color: #ccac1d;
+}
+
+.high:hover {
+    color: #ffffff;
+    background-color: #fa3838;
+}
+
+.radio-label-medium {
+    color: #ccac1d;
+    border-color: #ccac1d;
+}
+
+#high, .high {
+    color: #fa3838;
+    border-color: #fa3838;
+}
+
+.radio-label {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    margin-right: 8px;
+    border-radius: 5px;
+}
+
+.radio-label span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: .85rem;
+    height: 100%;
+    width: 100%;
+    text-align: center;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 

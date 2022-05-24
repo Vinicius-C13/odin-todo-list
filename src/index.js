@@ -116,14 +116,12 @@ const UI = (() => {
             addTaskToList(task);
             storeTask(task);
         });
-        console.log(tasksArray);
     };
 
     const displayFilteredTasks = (tasksArray)=> {
         tasksArray.forEach(task=>{
             addTaskToList(task);
         });
-        console.log(tasksArray);
     };
 
     const storeTask = (task) => {
@@ -138,13 +136,13 @@ const UI = (() => {
         task_div.classList.add('task-item', task.prior);
 
         task_div.innerHTML = `
-            <div class="check-btn"></div>
+            <div class="check-btn btn-pointer"></div>
             <div class="main-task-infos">
                 <div class="task-title">${task.title}</div>
                 <div class="details">${task.desc}</div>
             </div>
             <div class="date">${task.date}</div>
-            <div class="delete-btn"></div>
+            <div class="delete-btn btn-pointer"></div>
         `
         //Eu associei um objeto à um elemento html. Isso vai permitir que eu retire o objeto da array e o elemento do DOM.
         task_div.objectAssign = task;
@@ -153,7 +151,11 @@ const UI = (() => {
     }
 
     const clearTaskDisplay = () => {
-        document.querySelector('#main').innerHTML = '';
+        document.querySelector('#main').innerHTML = `
+            <div class="new-task-card btn-pointer">
+                <img class="new-task-btn" src="./assets/add.png" alt="plus icon">
+                Add a Task
+            </div>`;
     }
 
     const deleteTask = (taskElement, taskObject)=> {
@@ -170,6 +172,21 @@ const UI = (() => {
         document.querySelector('.new-overlay').classList.remove('show-task-form');
     }
 
+    const displayCurrentDate = (() => {
+        const dateField = document.querySelector('.actual-date');
+        dateField.textContent = Logic.getReadableDate();
+    })();
+
+    const displayListTitle = (title) => {
+        const titleField = document.querySelector('.chosen-list-title');
+        titleField.textContent = title;
+    }
+    
+    const filterAllTasks = () => {
+        clearTaskDisplay();
+        displayFilteredTasks(generalTasksArray);
+    }
+
     const filterTodayTasks = () => {
         const todayTasks = generalTasksArray.filter((el)=>{
             return el.date === Logic.getCurrentDate().currentDate;
@@ -178,7 +195,7 @@ const UI = (() => {
         displayFilteredTasks(todayTasks);
     }
 
-    return {openTaskForm, closeTaskForm, addTaskToList, displayTasks, deleteTask, filterTodayTasks, clearTaskDisplay, storeTask}
+    return {openTaskForm, closeTaskForm, addTaskToList, displayTasks, deleteTask, filterTodayTasks, clearTaskDisplay, storeTask, displayListTitle, filterAllTasks}
 })();
 
 //Store module: Handles storage
@@ -202,6 +219,7 @@ document.querySelector('form').addEventListener("submit", (e)=>{
     UI.addTaskToList(newTask);
     UI.storeTask(newTask);
     UI.closeTaskForm();
+
 })
 
 document.querySelectorAll('.task-item').forEach((item) => {
@@ -209,7 +227,14 @@ document.querySelectorAll('.task-item').forEach((item) => {
 });
 
 //Event: Open form
-document.querySelector('.new-task-btn').addEventListener('click', ()=>UI.openTaskForm());
+//document.querySelector('.new-task-card').addEventListener('click', ()=>UI.openTaskForm());
+
+document.addEventListener('click', (e) => {
+    if(e.target.classList.contains('new-task-card') || e.target.classList.contains('new-task-btn')) {
+        UI.openTaskForm();
+    }
+});
+
 //Event: Close form
 document.querySelector('#close-form-btn').addEventListener('click', ()=>UI.closeTaskForm());
 
@@ -221,12 +246,23 @@ document.addEventListener('click', (e)=>{
 })
 
 //Event: add a new list
-document.querySelector('.new-list-btn').addEventListener('click', (e)=> console.log(e.target));
+document.querySelector('.new-list-btn').addEventListener('click', (e)=> {
+    
+});
 
 //Event: Select today tasks
 document.querySelector('#my-day-tasks').addEventListener('click', () => {
     UI.filterTodayTasks();
+    UI.displayListTitle('My day');
 });
+
+//Events: Select all tasks
+document.querySelector('#all-tasks').addEventListener('click', () => {
+    UI.filterAllTasks();
+    UI.displayListTitle('All tasks');
+});
+
+document.addEventListener('DOMContentLoaded', ()=>UI.displayListTitle('All tasks'));
 
 //Event: Create new Project List
 

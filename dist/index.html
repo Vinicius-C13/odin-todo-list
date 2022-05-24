@@ -40,18 +40,21 @@
         <div id="side-bar">
             <div class="logo"><img src="./assets/double-check.png" alt="logo"><h1>Todo List</h1></div>
             <ul class="lists-ul">
-                <li class="list-item" id="my-day-tasks"><img src="./assets/sunny.png" alt="Sun icon">My day</li>
-                <li class="list-item"><img src="./assets/calendar.png" alt="Calendar icon">My Week</li>
-                <li class="list-item"><img src="./assets/work-done.png" alt="Check icon">Done</li>
-                <li class="list-item new-list-btn"><img src="./assets/plus.png" alt="plus icon">New List</li>
+                <li class="list-item btn-pointer" id="my-day-tasks"><img src="./assets/sunny.png" alt="Sun icon">My day</li>
+                <li class="list-item btn-pointer" id="all-tasks"><img src="./assets/calendar.png" alt="Calendar icon">All tasks</li>
+                <li class="list-item btn-pointer"><img src="./assets/work-done.png" alt="Check icon">Done</li>
+            </ul>
+            <ul class="lists-ul projects-list">
+                <li><h3>Projects</h3></li>
+                <li class="list-item new-list-btn btn-pointer"><img src="./assets/plus.png" alt="plus icon">New project</li>
             </ul>
         </div>
         <div id="header">
-            <div class="chosen-list-title">My day</div>
+            <div class="chosen-list-title"></div>
             <div class="actual-date">Wednesday 11 May</div>
         </div>
         <div id="main" class="grid">
-            <div class="new-task-card"><img class="new-task-btn" src="./assets/add.png" alt="plus icon">Add a Task</div>
+            <div class="new-task-card btn-pointer"><img class="new-task-btn" src="./assets/add.png" alt="plus icon">Add a Task</div>
         </div>
     </div>
 <script src="main.js"></script>

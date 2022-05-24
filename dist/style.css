@@ -368,3 +368,6 @@ input:checked {
     justify-content: center;
 }
 
+.btn-pointer {
+    cursor: pointer;
+}

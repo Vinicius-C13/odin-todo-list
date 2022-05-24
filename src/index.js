@@ -7,8 +7,109 @@ const generalTasksArray = [
 
 ]
 
+const Logic = (() =>{
+
+    const getCurrentDate = () => {
+        const data = new Date();
+        
+        const day = String(data.getDate()).padStart(2, '0');
+        const month = String(data.getMonth() + 1).padStart(2, '0');
+        const year = String(data.getFullYear());
+        const dayOfWeek = data.getDay();
+
+        const currentDate = `${year}-${month}-${day}`
+
+        return {dayOfWeek, day, month, year, currentDate}
+    }
+
+    const getReadableDate = () => {
+        
+        const getDayOfWeek = () => {
+            
+            let dayOfWeek = '';
+
+            switch(getCurrentDate().dayOfWeek){
+                case 0:
+                    dayOfWeek = 'Sunday';
+                    break;
+                case 1:
+                    dayOfWeek = 'Monday';
+                    break;
+                case 2:
+                    dayOfWeek = 'Tuesday';
+                    break;
+                case 3:
+                    dayOfWeek = 'Wednesday';
+                    break;
+                case 4:
+                    dayOfWeek = 'Thursday';
+                    break;
+                case 5:
+                    dayOfWeek = 'Friday';
+                    break;   
+                case 6:
+                    dayOfWeek = 'Saturday';
+                    break;     
+            }
+
+            return {dayOfWeek}
+        }
+
+        const getMonthName = () => {
+            
+            let monthName = '';
+
+            switch(getCurrentDate().month){
+                case '01':
+                    monthName = 'Jan';
+                    break;
+                case '02':
+                    monthName = 'Feb';
+                    break;
+                case '03':
+                    monthName = 'Mar';
+                    break;
+                case '04':
+                    monthName = 'Apr';
+                    break;
+                case '05':
+                    monthName = 'May';
+                    break;   
+                case '06':
+                    monthName = 'Jun';
+                    break;
+                case '07':
+                    monthName = 'Jul';
+                    break;
+                case '08':
+                    monthName = 'Aug';
+                    break;
+                case '09':
+                    monthName = 'Sep';
+                    break;
+                case '10':
+                    monthName = 'Oct';
+                    break;
+                case '11':
+                    monthName = 'Nov';
+                    break;
+                case '12':
+                    monthName = 'Dec';
+                    break;    
+            }
+            return {monthName}
+        }
+
+            const weekDayMonthDate = `${getDayOfWeek().dayOfWeek}, ${getCurrentDate().day} ${getMonthName().monthName} ${getCurrentDate().year}`
+
+            return weekDayMonthDate
+    }
+
+    return {getCurrentDate, getReadableDate}
+})()
+
 //UI module: Handles UI
-const UI = (()=> {
+const UI = (() => {
 
     const displayTasks = (tasksArray)=> {
         tasksArray.forEach(task=>{
@@ -71,13 +172,13 @@ const UI = (()=> {
 
     const filterTodayTasks = () => {
         const todayTasks = generalTasksArray.filter((el)=>{
-            return el.date == '2022-05-23';
+            return el.date === Logic.getCurrentDate().currentDate;
         });
         clearTaskDisplay();
         displayFilteredTasks(todayTasks);
     }
 
-    return {openTaskForm, closeTaskForm, addTaskToList, displayTasks, deleteTask, filterTodayTasks, clearTaskDisplay}
+    return {openTaskForm, closeTaskForm, addTaskToList, displayTasks, deleteTask, filterTodayTasks, clearTaskDisplay, storeTask}
 })();
 
 //Store module: Handles storage
@@ -99,6 +200,7 @@ document.querySelector('form').addEventListener("submit", (e)=>{
     const newTask = taskFactory(title, desc, date, prior);
 
     UI.addTaskToList(newTask);
+    UI.storeTask(newTask);
     UI.closeTaskForm();
 })
 
@@ -119,20 +221,20 @@ document.addEventListener('click', (e)=>{
 })
 
 //Event: add a new list
-document.querySelector('.new-list-btn').addEventListener('click', (e)=> console.log(e.target))
+document.querySelector('.new-list-btn').addEventListener('click', (e)=> console.log(e.target));
 
-//Event: Filter tasks by date
+//Event: Select today tasks
 document.querySelector('#my-day-tasks').addEventListener('click', () => {
     UI.filterTodayTasks();
-})
+});
+
+//Event: Create new Project List
 
 const arrayOfObjects = [
-    {title: 'test 1', desc: 'test 1', date: '2022-05-23', prior: 'priority-low'},
+    {title: 'test 1', desc: 'test 1', date: '2022-05-24', prior: 'priority-low'},
     {title: 'test 2', desc: 'test 2', date: '2022-06-25', prior: 'priority-high'},
-    {title: 'test 3', desc: 'test 3', date: '2022-05-23', prior: 'priority-low'},
+    {title: 'test 3', desc: 'test 3', date: '2022-05-24', prior: 'priority-low'},
     {title: 'test 4', desc: 'test 4', date: '2022-05-28', prior: 'priority-medium'}
-]
+];
 
 UI.displayTasks(arrayOfObjects);
-
-

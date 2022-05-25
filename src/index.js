@@ -207,6 +207,9 @@ const UI = (() => {
     }
 
     const checkTask = (taskEl, taskObj) => {
+        if(taskEl.classList.contains('done-task')) {
+            return
+        }
         doneTasksArray.push(taskObj);
         deleteTask(taskEl, taskObj);
         console.log(doneTasksArray);
@@ -295,7 +298,6 @@ document.querySelector('#done-tasks').addEventListener('click', () => {
 
 
 //Event: Check a task
-
 document.addEventListener('click', (e)=>{
     if(e.target.classList.contains('check-btn')){
         UI.checkTask(e.target.parentNode, e.target.parentNode.objectAssign);

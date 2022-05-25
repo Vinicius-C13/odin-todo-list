@@ -7,6 +7,10 @@ const generalTasksArray = [
 
 ]
 
+const doneTasksArray = [
+
+]
+
 const Logic = (() =>{
 
     const getCurrentDate = () => {
@@ -118,9 +122,9 @@ const UI = (() => {
         });
     };
 
-    const displayFilteredTasks = (tasksArray)=> {
+    const displayFilteredTasks = (tasksArray, typeOfTask)=> {
         tasksArray.forEach(task=>{
-            addTaskToList(task);
+            addTaskToList(task, typeOfTask);
         });
     };
 
@@ -128,12 +132,17 @@ const UI = (() => {
         generalTasksArray.push(task)
     }
 
-    const addTaskToList = (task)=> {
+    const addTaskToList = (task, type)=> {
         const taskContainer = document.querySelector('#main');
 
         const task_div = document.createElement('div');
 
-        task_div.classList.add('task-item', task.prior);
+        if(type === undefined) {
+            task_div.classList.add('task-item', task.prior);
+        } else {
+            task_div.classList.add('task-item', task.prior, type);
+        }
+
 
         task_div.innerHTML = `
             <div class="check-btn btn-pointer"></div>
@@ -150,7 +159,9 @@ const UI = (() => {
         taskContainer.prepend(task_div);
     }
 
-    const clearTaskDisplay = () => {
+    const clearTaskDisplay = (noAddBtn) => {
+        if(noAddBtn) {return document.querySelector('#main').innerHTML =""}
+
         document.querySelector('#main').innerHTML = `
             <div class="new-task-card btn-pointer">
                 <img class="new-task-btn" src="./assets/add.png" alt="plus icon">
@@ -195,7 +206,18 @@ const UI = (() => {
         displayFilteredTasks(todayTasks);
     }
 
-    return {openTaskForm, closeTaskForm, addTaskToList, displayTasks, deleteTask, filterTodayTasks, clearTaskDisplay, storeTask, displayListTitle, filterAllTasks}
+    const checkTask = (taskEl, taskObj) => {
+        doneTasksArray.push(taskObj);
+        deleteTask(taskEl, taskObj);
+        console.log(doneTasksArray);
+    };
+
+    const filterDoneTasks = () => {
+        clearTaskDisplay(true);
+        displayFilteredTasks(doneTasksArray, 'done-task');
+    }
+
+    return {openTaskForm, closeTaskForm, addTaskToList, displayTasks, deleteTask, filterTodayTasks, clearTaskDisplay, storeTask, displayListTitle, filterAllTasks, checkTask, filterDoneTasks}
 })();
 
 //Store module: Handles storage
@@ -264,13 +286,27 @@ document.querySelector('#all-tasks').addEventListener('click', () => {
 
 document.addEventListener('DOMContentLoaded', ()=>UI.displayListTitle('All tasks'));
 
-//Event: Create new Project List
+//Event: Select done tasks tab
+document.querySelector('#done-tasks').addEventListener('click', () => {
+    console.log('tetse')
+    UI.filterDoneTasks();
+    UI.displayListTitle(document.querySelector('#done-tasks').textContent);
+});
+
+
+//Event: Check a task
+
+document.addEventListener('click', (e)=>{
+    if(e.target.classList.contains('check-btn')){
+        UI.checkTask(e.target.parentNode, e.target.parentNode.objectAssign);
+    }
+})
 
 const arrayOfObjects = [
-    {title: 'test 1', desc: 'test 1', date: '2022-05-24', prior: 'priority-low'},
-    {title: 'test 2', desc: 'test 2', date: '2022-06-25', prior: 'priority-high'},
-    {title: 'test 3', desc: 'test 3', date: '2022-05-24', prior: 'priority-low'},
-    {title: 'test 4', desc: 'test 4', date: '2022-05-28', prior: 'priority-medium'}
+    {title: 'test 1', desc: 'test 1', date: '2022-05-25', prior: 'priority-low'},
+    {title: 'test 2', desc: 'test 2', date: '2022-05-27', prior: 'priority-high'},
+    {title: 'test 3', desc: 'test 3', date: '2022-05-28', prior: 'priority-low'},
+    {title: 'test 4', desc: 'test 4', date: '2022-05-27', prior: 'priority-medium'}
 ];
 
 UI.displayTasks(arrayOfObjects);

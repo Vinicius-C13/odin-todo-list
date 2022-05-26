@@ -225,7 +225,7 @@ li {
     z-index: 100;
 }
 
-.show-task-form {
+.show-overlay {
     position: fixed;
     display: flex;
 }
@@ -390,4 +390,10 @@ input:checked {
 
 .check-btn:hover{
     background-color: rgba(0, 0, 0, 0.842);
+}
+
+.project-color {
+    width: 32px;
+    aspect-ratio: 1;
+    border-radius: 50%;
 }

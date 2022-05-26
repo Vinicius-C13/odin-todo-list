@@ -8,8 +8,8 @@
     <title>Document</title>
 </head>
 <body>
-<div class="new-overlay">
-</div>
+<div class="new-overlay" id="overlay-project"></div>
+<div class="new-overlay" id="overlay-task"></div>
     <div id="content" class="grid">
         <div id="side-bar">
             <div class="logo"><img src="./assets/double-check.png" alt="logo"><h1>Todo List</h1></div>
@@ -18,10 +18,12 @@
                 <li class="list-item btn-pointer" id="all-tasks"><img src="./assets/calendar.png" alt="Calendar icon">All tasks</li>
                 <li class="list-item btn-pointer" id="done-tasks"><img src="./assets/work-done.png" alt="Check icon">Done</li>
             </ul>
-            <ul class="lists-ul projects-list">
+            <div>
                 <li><h3>Projects</h3></li>
-                <li class="list-item new-list-btn btn-pointer"><img src="./assets/plus.png" alt="plus icon">New project</li>
-            </ul>
+                <ul class="lists-ul projects-list">
+                    <li class="list-item new-list-btn btn-pointer"><img src="./assets/plus.png" alt="plus icon">New project</li>
+                </ul>
+            </div>
         </div>
         <div id="header">
             <div class="chosen-list-title"></div>

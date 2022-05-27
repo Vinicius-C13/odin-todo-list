@@ -22,7 +22,7 @@ const projectFactory = (name, color, details) => {
 
 const taskFactory = (title, desc, date, prior, projectID) => {
     let status = 1;
-    return {title, desc, date, prior, projectID, status, changeStatus};
+    return {title, desc, date, prior, projectID, status};
 }
 
 

@@ -2,8 +2,12 @@ import {projectForm} from './form/project-form.js';
 import {taskForm} from './form/task-form.js';
 
 const allTasks_array = [
-    {title: 'test 1', desc: 'test 1', date: '2022-05-25', prior: 'priority-low'},
-    {title: 'test 2', desc: 'test 2', date: '2022-05-27', prior: 'priority-high'}
+    {title: 'test 1', desc: 'test 1', date: '2022-05-25', prior: 'priority-low', status: 1},
+    {title: 'test 2', desc: 'test 2', date: '2022-05-27', prior: 'priority-high', status: 1},
+    {title: 'não apareça', desc: 'test 3', date: '2022-05-30', prior: 'priority-medium', status: 1},
+    {title: 'test 2', desc: 'test 2', date: '2023-05-27', prior: 'priority-high', status: 1},
+    {title: 'test 2', desc: 'test 2', date: '2022-09-27', prior: 'priority-high', status: 1},
+    {title: 'test 2', desc: 'test 2', date: '2022-05-26', prior: 'priority-high', status: 1},
 ];
 const doneTasks_array = [];
 const todayTasks_array = [];
@@ -12,15 +16,13 @@ const allProjects_array = [{name: "All tasks", color: "#5d9963", details: "Find 
 
 //Factory Functions
 const projectFactory = (name, color, details) => {
-    const addATask = (task) => {
-        relatedTasks.unshift(task);
-    }
     const relatedTasks = [];
-    return {name, color, details, relatedTasks, addATask};
+    return {name, color, details, relatedTasks};
 }
 
 const taskFactory = (title, desc, date, prior, projectID) => {
-    return {title, desc, date, prior, projectID}
+    let status = 1;
+    return {title, desc, date, prior, projectID, status, changeStatus};
 }
 
 
@@ -45,14 +47,32 @@ const Logic = (() => {
         allTasks_array.push(task);
     }
 
-    const filterTasks = (projectObj) => {
-        if(projectObj.name === "All tasks") {
-            return allTasks_array;
+    const filterTasks = (project) => {
+
+        if(project === "done-tasks") {
+            const doneTasks_array = allTasks_array.filter((task)=>{
+                return task.status === -1
+            })
+            return doneTasks_array;
+        } 
+        else if(project.name === "All tasks") {
+            const newAllTasks_array = allTasks_array.filter((task)=>{
+                return task.status === 1
+            })
+            return newAllTasks_array;
         }
-         const filteredTasks_array = allTasks_array.filter((task)=>{
-            return task.projectID === projectObj.name;
+
+        const filteredTasks_array = allTasks_array.filter((task)=>{
+            if(task.status === 1) {return task.projectID === project.name};
         });
-        return filteredTasks_array
+        return filteredTasks_array;
+    }
+
+    const filterTodayTasks = () => {
+        const todayTasks_array = allTasks_array.filter((task)=>{
+            return task.date === getCurrentDate().currentDate;
+        });
+        return todayTasks_array;
     }
 
     const deleteTask = (taskElement, taskObject)=> {
@@ -60,7 +80,67 @@ const Logic = (() => {
         UI.removeTaskFromDisplay(taskElement);
     }
 
-    return {createNewProject, addTaskToArray, filterTasks, deleteTask}
+    const checkTask = (taskEl, taskObj) => {
+        taskObj.status *= -1;
+        UI.removeTaskFromDisplay(taskEl);
+    }
+
+    const getCurrentDate = () => {
+        const data = new Date();
+
+        const day = String(data.getDate()).padStart(2, '0');
+        const month = String(data.getMonth() + 1).padStart(2, '0');
+        const year = String(data.getFullYear());
+        const dayOfWeek = data.getDay();
+
+        const currentDate = `${year}-${month}-${day}`
+
+        return {dayOfWeek, day, month, year, currentDate};
+    }
+
+    const getReadableDate = () => {
+
+        const getDayOfWeek = () => {
+
+            let dayOfWeek = '';
+
+            switch(getCurrentDate().dayOfWeek){
+                case 0: dayOfWeek = 'Sunday'; break;
+                case 1: dayOfWeek = 'Monday'; break;
+                case 2: dayOfWeek = 'Tuesday'; break;
+                case 3: dayOfWeek = 'Wednesday'; break;
+                case 4: dayOfWeek = 'Thursday'; break;
+                case 5: dayOfWeek = 'Friday'; break;   
+                case 6: dayOfWeek = 'Saturday'; break;     
+            };
+
+            return dayOfWeek;
+        };
+
+        const getMonthName = () => {
+
+            let monthName = '';
+
+            switch(getCurrentDate().month){
+                case '01': monthName = 'Jan'; break;
+                case '02': monthName = 'Feb'; break;
+                case '03': monthName = 'Mar'; break;
+                case '04': monthName = 'Apr'; break;
+                case '05': monthName = 'May'; break;   
+                case '06': monthName = 'Jun'; break;
+                case '07': monthName = 'Jul'; break;
+                case '08': monthName = 'Aug'; break;
+                case '09': monthName = 'Sep'; break;
+                case '10': monthName = 'Oct'; break;
+                case '11': monthName = 'Nov'; break;
+                case '12': monthName = 'Dec'; break;    
+            }
+            return monthName
+        }
+            return `${getDayOfWeek()}, ${getCurrentDate().day} ${getMonthName()} ${getCurrentDate().year}`;
+    }
+
+    return {createNewProject, addTaskToArray, filterTasks, deleteTask, checkTask, getCurrentDate, filterTodayTasks, getReadableDate}
 })();
 
 
@@ -77,7 +157,6 @@ const UI = (() => {
             overlay.classList.add('show-overlay');
             overlay.innerHTML = taskForm;
             overlay.relatedProject = project;
-            console.log(overlay.relatedProject);
         }
     }
 
@@ -188,8 +267,6 @@ document.querySelector('#overlay-project').addEventListener('submit', (e)=>{
 document.querySelector('#overlay-task').addEventListener("submit", (e)=>{
     e.preventDefault();
 
-    console.log(allTasks_array);
-
     const relatedProject = document.querySelector('#overlay-task').relatedProject;
 
     const title = document.querySelector('#new-todo--title').value;
@@ -212,7 +289,7 @@ document.addEventListener('DOMContentLoaded', () => {
         UI.displayElement(project, document.querySelector('.projects-list'))
     })
     //Open the page with the "All tasks" selected
-    UI.displayProjectList(allProjects_array[0], allTasks_array);
+    UI.displayProjectList(allProjects_array[0], Logic.filterTasks(allProjects_array[0]));
 });
 
 //Event: Open project form
@@ -248,12 +325,31 @@ document.querySelector('.projects-list').addEventListener('click', (e) => {
     };
 });
 
+//Event: Open list of done tasks
+document.querySelector('#done-tasks').addEventListener('click', () => {
+    UI.displayProjectList({name: "Done tasks", details: "All done tasks", color: "#5d9963"}, Logic.filterTasks("done-tasks"));
+});
+
+//Event: Open list of today tasks
+document.querySelector('#my-day-tasks').addEventListener('click', () => {
+    UI.displayProjectList({name: "Today tasks", details: Logic.getReadableDate(), color: "#5d9963"}, Logic.filterTodayTasks());
+});
+
+
 //Event: Delete a task
-document.addEventListener('click', (e)=>{
+document.addEventListener('click', (e) => {
     if(e.target.classList.contains('delete-btn')){
         Logic.deleteTask(e.target.parentNode, e.target.parentNode.objectAssign);
     }
 })
+
+//Check a task
+document.addEventListener('click', (e) => {
+    if(e.target.classList.contains('check-btn')){
+        Logic.checkTask(e.target.parentNode, e.target.parentNode.objectAssign);
+    }
+})
+
 
 
 

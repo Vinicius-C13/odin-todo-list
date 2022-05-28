@@ -245,6 +245,21 @@ const UI = (() => {
 })();
 
 
+const Store = (() => {
+
+    const getTasks = () => {
+        let tasks = localStorage.getItem('tasks') !== null ? JSON.parse(localStorage.getItem('tasks')) : [];
+        return tasks;
+    }
+
+    const addTasks = (task) => {
+        const tasks = getTasks();
+        tasks.push(task);
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+    }
+
+})();
+
 //Events tab
 
 //Event: Create a new project

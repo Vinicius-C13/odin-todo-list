@@ -2,12 +2,7 @@ import {projectForm} from './form/project-form.js';
 import {taskForm} from './form/task-form.js';
 
 const allTasks_array = [
-    {title: 'test 1', desc: 'test 1', date: '2022-05-25', prior: 'priority-low', status: 1},
-    {title: 'test 2', desc: 'test 2', date: '2022-05-27', prior: 'priority-high', status: 1},
-    {title: 'não apareça', desc: 'test 3', date: '2022-05-30', prior: 'priority-medium', status: 1},
-    {title: 'test 2', desc: 'test 2', date: '2023-05-27', prior: 'priority-high', status: 1},
-    {title: 'test 2', desc: 'test 2', date: '2022-09-27', prior: 'priority-high', status: 1},
-    {title: 'test 2', desc: 'test 2', date: '2022-05-26', prior: 'priority-high', status: 1},
+    {title: 'Example', desc: 'Do something', date: '2022-05-27', prior: 'priority-low', status: 1},
 ];
 const doneTasks_array = [];
 const todayTasks_array = [];
@@ -70,7 +65,7 @@ const Logic = (() => {
 
     const filterTodayTasks = () => {
         const todayTasks_array = allTasks_array.filter((task)=>{
-            return task.date === getCurrentDate().currentDate;
+            if(task.status === 1) {return task.date === getCurrentDate().currentDate};
         });
         return todayTasks_array;
     }
@@ -158,7 +153,7 @@ const UI = (() => {
             overlay.innerHTML = taskForm;
             overlay.relatedProject = project;
         }
-    }
+    };
 
     const closeForm = (type) => {
         if (type === 'project') {
@@ -170,7 +165,7 @@ const UI = (() => {
             overlay.classList.remove('show-overlay');
             overlay.innerHTML = "";
         }
-    }
+    };
 
     const _createProjectElement = (project) => {
         const projectEl = document.createElement('li');
@@ -178,22 +173,22 @@ const UI = (() => {
         projectEl.obj_ID = project;
         projectEl.innerHTML = `<div class= "project-color" style="background: ${project.color}"></div>${project.name}`;
         return projectEl
-    }
+    };
 
     const displayElement = (project, parent)=> {
         parent.appendChild(_createProjectElement(project));
     };
 
-    const displayProjectList = (project, array) => {
+    const displayProjectList = (project, array, status) => {
         const title = document.querySelector('.chosen-list-title');
         const details = document.querySelector('.project-details');
         const header = document.querySelector('#header');
         title.textContent = project.name;
         details.textContent = project.details;
         header.style.backgroundColor = project.color;
-        _displayOnlyAddTaskButton(project);
-        _displayFilteredTasks(array);
-    }
+        _displayOnlyAddTaskButton(project, status);
+        _displayFilteredTasks(array, status);
+    };
 
     //Start: Controls tasks
     const _displayFilteredTasks = (array, status)=> {
@@ -208,7 +203,7 @@ const UI = (() => {
         const task_div = document.createElement('div');
 
         if(status === undefined) {task_div.classList.add('task-item', task.prior);
-        } else {task_div.classList.add('task-item', task.prior, status);}
+        } else {task_div.classList.add('task-item', task.prior, status)};
 
         task_div.innerHTML = `
             <div class="check-btn btn-pointer"></div>
@@ -223,25 +218,27 @@ const UI = (() => {
         task_div.objectAssign = task;
 
         taskContainer.prepend(task_div);
-    }
+    };
 
     const _clearTaskDisplay = () => {
         document.querySelector('#main').innerHTML = '';
-    }
+    };
 
-    const _displayOnlyAddTaskButton = (project) => {
+    const _displayOnlyAddTaskButton = (project, status) => {
         _clearTaskDisplay();
-        const add_button = document.createElement('div');
-        add_button.classList.add('new-task-card', 'btn-pointer')
-        add_button.innerHTML = `<img class="new-task-btn" src="./assets/add.png" alt="plus icon">Add a Task`;
-        add_button.relatedProject = project;
-        document.querySelector('#main').appendChild(add_button);
-    }
+        if(status === undefined){
+            const add_button = document.createElement('div');
+            add_button.classList.add('new-task-card', 'btn-pointer')
+            add_button.innerHTML = `<img class="new-task-btn" src="./assets/add.png" alt="plus icon">Add a Task`;
+            add_button.relatedProject = project;
+            document.querySelector('#main').appendChild(add_button);
+        };
+    };
+
     const removeTaskFromDisplay = (element) => {
         const taskContainer = document.querySelector('#main');
         taskContainer.removeChild(element);
-    }
-    
+    };
 
     //Finish: Controls tasks
     return {openForm, closeForm, displayElement, displayProjectList, addTaskToList, removeTaskFromDisplay}
@@ -327,12 +324,12 @@ document.querySelector('.projects-list').addEventListener('click', (e) => {
 
 //Event: Open list of done tasks
 document.querySelector('#done-tasks').addEventListener('click', () => {
-    UI.displayProjectList({name: "Done tasks", details: "All done tasks", color: "#5d9963"}, Logic.filterTasks("done-tasks"));
+    UI.displayProjectList({name: "Done tasks", details: "All done tasks", color: "#5d9963"}, Logic.filterTasks("done-tasks"), 'done-task');
 });
 
 //Event: Open list of today tasks
 document.querySelector('#my-day-tasks').addEventListener('click', () => {
-    UI.displayProjectList({name: "Today tasks", details: Logic.getReadableDate(), color: "#5d9963"}, Logic.filterTodayTasks());
+    UI.displayProjectList({name: "Today tasks", details: Logic.getReadableDate(), color: "#5d9963"}, Logic.filterTodayTasks(), 'today-task');
 });
 
 

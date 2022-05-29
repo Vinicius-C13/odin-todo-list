@@ -21,6 +21,29 @@ const taskFactory = (title, desc, date, prior, projectID) => {
 }
 
 
+const Store = (() => {
+
+    const getTasks = () => {
+        let tasks = localStorage.getItem('tasks') !== null ? JSON.parse(localStorage.getItem('tasks')) : [];
+        return tasks;
+    }
+
+    const addTask = (task) => {
+        const tasks = getTasks();
+        tasks.push(task);
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+    }
+
+    const deleteTask = (element) => {
+        const tasks = getTasks();
+        tasks.splice(tasks.indexOf(element), 1);
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+    }
+
+    return {getTasks, addTask, deleteTask};
+})();
+
+
 //Handles Logic
 const Logic = (() => {
     const createNewProject = (name, color, details) => {
@@ -244,21 +267,6 @@ const UI = (() => {
     return {openForm, closeForm, displayElement, displayProjectList, addTaskToList, removeTaskFromDisplay}
 })();
 
-
-const Store = (() => {
-
-    const getTasks = () => {
-        let tasks = localStorage.getItem('tasks') !== null ? JSON.parse(localStorage.getItem('tasks')) : [];
-        return tasks;
-    }
-
-    const addTasks = (task) => {
-        const tasks = getTasks();
-        tasks.push(task);
-        localStorage.setItem('tasks', JSON.stringify(tasks));
-    }
-
-})();
 
 //Events tab
 

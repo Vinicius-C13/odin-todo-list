@@ -1,14 +1,6 @@
 import {projectForm} from './form/project-form.js';
 import {taskForm} from './form/task-form.js';
 
-const allTasks_array = [
-    {title: 'Example', desc: 'Do something', date: '2022-05-27', prior: 'priority-low', status: 1},
-];
-const doneTasks_array = [];
-const todayTasks_array = [];
-const allProjects_array = [{name: "All tasks", color: "#5d9963", details: "Find all tasks here", relatedTasks:allTasks_array}];
-
-
 //Factory Functions
 const projectFactory = (name, color, details) => {
     const relatedTasks = [];
@@ -44,6 +36,12 @@ const Store = (() => {
 })();
 
 
+const doneTasks_array = [];
+const todayTasks_array = [];
+const allProjects_array = [{name: "All tasks", color: "#5d9963", details: "Find all tasks here", relatedTasks:Store.getTasks()}];
+
+
+
 //Handles Logic
 const Logic = (() => {
     const createNewProject = (name, color, details) => {
@@ -61,40 +59,36 @@ const Logic = (() => {
         allProjects_array.push(project);
     }
 
-    const addTaskToArray = (task) => {
-        allTasks_array.push(task);
-    }
-
     const filterTasks = (project) => {
 
         if(project === "done-tasks") {
-            const doneTasks_array = allTasks_array.filter((task)=>{
+            const doneTasks_array = Store.getTasks().filter((task)=>{
                 return task.status === -1
             })
             return doneTasks_array;
         } 
         else if(project.name === "All tasks") {
-            const newAllTasks_array = allTasks_array.filter((task)=>{
+            const newArray = Store.getTasks().filter((task)=>{
                 return task.status === 1
             })
-            return newAllTasks_array;
+            return newArray;
         }
 
-        const filteredTasks_array = allTasks_array.filter((task)=>{
+        const filteredTasks_array = Store.getTasks().filter((task)=>{
             if(task.status === 1) {return task.projectID === project.name};
         });
         return filteredTasks_array;
     }
 
     const filterTodayTasks = () => {
-        const todayTasks_array = allTasks_array.filter((task)=>{
+        const todayTasks_array = Store.getTasks().filter((task)=>{
             if(task.status === 1) {return task.date === getCurrentDate().currentDate};
         });
         return todayTasks_array;
     }
 
     const deleteTask = (taskElement, taskObject)=> {
-        allTasks_array.splice(allTasks_array.indexOf(taskObject), 1);
+        Store.deleteTask(taskObject);
         UI.removeTaskFromDisplay(taskElement);
     }
 
@@ -158,7 +152,7 @@ const Logic = (() => {
             return `${getDayOfWeek()}, ${getCurrentDate().day} ${getMonthName()} ${getCurrentDate().year}`;
     }
 
-    return {createNewProject, addTaskToArray, filterTasks, deleteTask, checkTask, getCurrentDate, filterTodayTasks, getReadableDate}
+    return {createNewProject, filterTasks, deleteTask, checkTask, getCurrentDate, filterTodayTasks, getReadableDate}
 })();
 
 
@@ -298,7 +292,7 @@ document.querySelector('#overlay-task').addEventListener("submit", (e)=>{
     const newTask = taskFactory(title, desc, date, prior, projectID);
 
     UI.addTaskToList(newTask);
-    Logic.addTaskToArray(newTask);
+    Store.addTask(newTask);
     UI.closeForm('task');
 })
 

@@ -8,12 +8,31 @@ const projectFactory = (name, color, details) => {
 }
 
 const taskFactory = (title, desc, date, prior, projectID) => {
-    let status = 1;
-    return {title, desc, date, prior, projectID, status};
+    return {title, desc, date, prior, projectID};
 }
 
 
 const Store = (() => {
+
+    const getProjects = () => {
+        let projects = localStorage.getItem('projects') !== null ? JSON.parse(localStorage.getItem('projects')) : [{name: "All tasks", color: "#5d9963", details: "Find all tasks here", relatedTasks:Store.getTasks()}];
+        return projects;
+    }
+
+    const addProject = (project) => {
+        const projects = getProjects();
+        projects.push(project);
+        localStorage.setItem('projects', JSON.stringify(projects));
+    }
+
+    const _deleteRelativeTasks = (name) => {
+        const tasks = getTasks();
+        tasks.forEach((task) => {
+            if(task.projectID === name) {
+                deleteTask(task);
+            }
+        })
+    }
 
     const getTasks = () => {
         let tasks = localStorage.getItem('tasks') !== null ? JSON.parse(localStorage.getItem('tasks')) : [];
@@ -26,19 +45,46 @@ const Store = (() => {
         localStorage.setItem('tasks', JSON.stringify(tasks));
     }
 
-    const deleteTask = (element) => {
+    const deleteTask = (task) => {
         const tasks = getTasks();
-        tasks.splice(tasks.indexOf(element), 1);
+        tasks.splice(tasks.indexOf(task), 1);
         localStorage.setItem('tasks', JSON.stringify(tasks));
     }
 
-    return {getTasks, addTask, deleteTask};
+    const getDoneTasks = () => {
+        let doneTasks = localStorage.getItem('done tasks') !== null ? JSON.parse(localStorage.getItem('done tasks')) : [];
+        return doneTasks;
+    }
+
+    const addDoneTask = (task) => {
+        const doneTasks = getDoneTasks();
+        doneTasks.push(task);
+        localStorage.setItem('done tasks', JSON.stringify(doneTasks));
+    }
+
+    const deleteDoneTask = (task) => {
+        const doneTasks = getDoneTasks();
+        doneTasks.splice(doneTasks.indexOf(task), 1);
+        localStorage.setItem('done tasks', JSON.stringify(doneTasks));
+    }
+
+    const changeToDoneList = (task) => {
+        deleteTask(task);
+        addDoneTask(task);
+    }
+
+    const changeToAllTasksList = (task) => {
+        deleteDoneTask(task);
+        addTask(task);
+    }
+
+    return {getTasks, addTask, deleteTask, getProjects, addProject, getDoneTasks, addDoneTask, deleteDoneTask, changeToDoneList, changeToAllTasksList};
 })();
 
 
 const doneTasks_array = [];
 const todayTasks_array = [];
-const allProjects_array = [{name: "All tasks", color: "#5d9963", details: "Find all tasks here", relatedTasks:Store.getTasks()}];
+//const allProjects_array = [{name: "All tasks", color: "#5d9963", details: "Find all tasks here", relatedTasks:Store.getTasks()}];
 
 
 
@@ -56,33 +102,24 @@ const Logic = (() => {
     }
 
     const _addProjectToArray = (project) => {
-        allProjects_array.push(project);
+        Store.addProject(project);
     }
 
     const filterTasks = (project) => {
 
-        if(project === "done-tasks") {
-            const doneTasks_array = Store.getTasks().filter((task)=>{
-                return task.status === -1
-            })
-            return doneTasks_array;
-        } 
-        else if(project.name === "All tasks") {
-            const newArray = Store.getTasks().filter((task)=>{
-                return task.status === 1
-            })
-            return newArray;
+        if(project.name === "All tasks") {
+            return Store.getTasks();
         }
 
         const filteredTasks_array = Store.getTasks().filter((task)=>{
-            if(task.status === 1) {return task.projectID === project.name};
+            if(task.status !== 1) {return task.projectID === project.name};
         });
         return filteredTasks_array;
     }
 
     const filterTodayTasks = () => {
         const todayTasks_array = Store.getTasks().filter((task)=>{
-            if(task.status === 1) {return task.date === getCurrentDate().currentDate};
+            if(task.status !== -1) {return task.date === getCurrentDate().currentDate};
         });
         return todayTasks_array;
     }
@@ -93,7 +130,12 @@ const Logic = (() => {
     }
 
     const checkTask = (taskEl, taskObj) => {
-        taskObj.status *= -1;
+        Store.changeToDoneList(taskObj);
+        UI.removeTaskFromDisplay(taskEl);
+    }
+
+    const uncheckTask = (taskEl, taskObj) => {
+        Store.changeToAllTasksList(taskObj);
         UI.removeTaskFromDisplay(taskEl);
     }
 
@@ -152,7 +194,7 @@ const Logic = (() => {
             return `${getDayOfWeek()}, ${getCurrentDate().day} ${getMonthName()} ${getCurrentDate().year}`;
     }
 
-    return {createNewProject, filterTasks, deleteTask, checkTask, getCurrentDate, filterTodayTasks, getReadableDate}
+    return {createNewProject, filterTasks, deleteTask, checkTask, uncheckTask, getCurrentDate, filterTodayTasks, getReadableDate}
 })();
 
 
@@ -188,7 +230,7 @@ const UI = (() => {
         const projectEl = document.createElement('li');
         projectEl.classList.add('project-item', 'btn-pointer')
         projectEl.obj_ID = project;
-        projectEl.innerHTML = `<div class= "project-color" style="background: ${project.color}"></div>${project.name}`;
+        projectEl.innerHTML = `<div class= "project-color" style="background: ${project.color}"></div>${project.name}<div class="delete-project-btn"></div>`;
         return projectEl
     };
 
@@ -299,11 +341,11 @@ document.querySelector('#overlay-task').addEventListener("submit", (e)=>{
 //Event: Display everything necessarty when the page is loaded
 document.addEventListener('DOMContentLoaded', () => {
     //Display all existing projects
-    allProjects_array.forEach((project)=>{
+    Store.getProjects().forEach((project)=>{
         UI.displayElement(project, document.querySelector('.projects-list'))
     })
     //Open the page with the "All tasks" selected
-    UI.displayProjectList(allProjects_array[0], Logic.filterTasks(allProjects_array[0]));
+    UI.displayProjectList(Store.getProjects()[0], Logic.filterTasks(Store.getProjects()[0]));
 });
 
 //Event: Open project form
@@ -341,7 +383,7 @@ document.querySelector('.projects-list').addEventListener('click', (e) => {
 
 //Event: Open list of done tasks
 document.querySelector('#done-tasks').addEventListener('click', () => {
-    UI.displayProjectList({name: "Done tasks", details: "All done tasks", color: "#5d9963"}, Logic.filterTasks("done-tasks"), 'done-task');
+    UI.displayProjectList({name: "Done tasks", details: "All done tasks", color: "#5d9963"}, Store.getDoneTasks(), 'done-task');
 });
 
 //Event: Open list of today tasks
@@ -353,18 +395,21 @@ document.querySelector('#my-day-tasks').addEventListener('click', () => {
 //Event: Delete a task
 document.addEventListener('click', (e) => {
     if(e.target.classList.contains('delete-btn')){
-        Logic.deleteTask(e.target.parentNode, e.target.parentNode.objectAssign);
+        if(e.target.parentElement.classList.contains('done-task')) {
+            UI.removeTaskFromDisplay(e.target.parentNode);
+            Store.deleteDoneTask(e.target.parentNode.objectAssign);
+        } else {
+            UI.removeTaskFromDisplay(e.target.parentNode);
+            Store.deleteTask(e.target.parentNode.objectAssign);
+        }
     }
 })
 
 //Check a task
 document.addEventListener('click', (e) => {
     if(e.target.classList.contains('check-btn')){
-        Logic.checkTask(e.target.parentNode, e.target.parentNode.objectAssign);
+        if(e.target.parentElement.classList.contains('done-task')){
+            Logic.uncheckTask(e.target.parentNode, e.target.parentNode.objectAssign);
+        } else {Logic.checkTask(e.target.parentNode, e.target.parentNode.objectAssign);}
     }
-})
-
-
-
-
-
+});

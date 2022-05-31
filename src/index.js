@@ -83,7 +83,7 @@ const Store = (() => {
     }
 
     const _projectFindIndex = (projectObj) => {
-        const projects_array = Store.getTasks();
+        const projects_array = Store.getProjects();
         let names = projects_array.map(project => project.name);
         let index = names.findIndex(name => name == projectObj.name);
         return index;
@@ -317,8 +317,13 @@ const UI = (() => {
         taskContainer.removeChild(element);
     };
 
+    const removeProjectFromDisplay = (element) => {
+        const projectsContainer = document.querySelector('.projects-list');
+        projectsContainer.removeChild(element);
+    }
+
     //Finish: Controls tasks
-    return {openForm, closeForm, displayElement, displayProjectList, addTaskToList, removeTaskFromDisplay}
+    return {openForm, closeForm, displayElement, displayProjectList, addTaskToList, removeTaskFromDisplay, removeProjectFromDisplay}
 })();
 
 
@@ -421,6 +426,14 @@ document.addEventListener('click', (e) => {
             Store.deleteTask(e.target.parentElement.objectAssign);
             console.log(e.target.parentElement.objectAssign);
         }
+    }
+})
+
+//Event: Delete a project
+document.addEventListener('click', (e) => {
+    if(e.target.classList.contains('delete-project-btn')) {
+        UI.removeProjectFromDisplay(e.target.parentElement);
+        Store.deleteProject(e.target.parentElement.obj_ID);
     }
 })
 

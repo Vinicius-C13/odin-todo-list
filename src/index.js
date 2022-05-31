@@ -25,13 +25,10 @@ const Store = (() => {
         localStorage.setItem('projects', JSON.stringify(projects));
     }
 
-    const _deleteRelativeTasks = (name) => {
-        const tasks = getTasks();
-        tasks.forEach((task) => {
-            if(task.projectID === name) {
-                deleteTask(task);
-            }
-        })
+    const deleteProject = (project) => {
+        const projects = getProjects();
+        projects.splice(_projectFindIndex(project), 1);
+        localStorage.setItem('projects', JSON.stringify(projects));
     }
 
     const getTasks = () => {
@@ -47,7 +44,7 @@ const Store = (() => {
 
     const deleteTask = (task) => {
         const tasks = getTasks();
-        tasks.splice(tasks.indexOf(task), 1);
+        tasks.splice(_taskFindIndex(task), 1);
         localStorage.setItem('tasks', JSON.stringify(tasks));
     }
 
@@ -64,7 +61,7 @@ const Store = (() => {
 
     const deleteDoneTask = (task) => {
         const doneTasks = getDoneTasks();
-        doneTasks.splice(doneTasks.indexOf(task), 1);
+        doneTasks.splice(_doneFindIndex(task), 1);
         localStorage.setItem('done tasks', JSON.stringify(doneTasks));
     }
 
@@ -78,7 +75,28 @@ const Store = (() => {
         addTask(task);
     }
 
-    return {getTasks, addTask, deleteTask, getProjects, addProject, getDoneTasks, addDoneTask, deleteDoneTask, changeToDoneList, changeToAllTasksList};
+    const _taskFindIndex = (taskObj) => {
+        const tasks_array = Store.getTasks();
+        let titles = tasks_array.map(task => task.title);
+        let index = titles.findIndex(title => title == taskObj.title);
+        return index;
+    }
+
+    const _projectFindIndex = (projectObj) => {
+        const projects_array = Store.getTasks();
+        let names = projects_array.map(project => project.name);
+        let index = names.findIndex(name => name == projectObj.name);
+        return index;
+    }
+
+    const _doneFindIndex = (taskObj) => {
+        const doneTasks_array = Store.getDoneTasks();
+        let titles = doneTasks_array.map(task => task.title);
+        let index = titles.findIndex(title => title == taskObj.title);
+        return index;
+    }
+
+    return {getTasks, addTask, deleteTask, getProjects, addProject, getDoneTasks, addDoneTask, deleteDoneTask, changeToDoneList, changeToAllTasksList, deleteProject};
 })();
 
 
@@ -396,12 +414,12 @@ document.querySelector('#my-day-tasks').addEventListener('click', () => {
 document.addEventListener('click', (e) => {
     if(e.target.classList.contains('delete-btn')){
         if(e.target.parentElement.classList.contains('done-task')) {
-            UI.removeTaskFromDisplay(e.target.parentNode);
-            Store.deleteDoneTask(e.target.parentNode.objectAssign);
+            UI.removeTaskFromDisplay(e.target.parentElement);
+            Store.deleteDoneTask(e.target.parentElement.objectAssign);
         } else {
-            UI.removeTaskFromDisplay(e.target.parentNode);
-            Store.deleteTask(e.target.parentNode.objectAssign);
-            console.log(e.target.parentNode.objectAssign);
+            UI.removeTaskFromDisplay(e.target.parentElement);
+            Store.deleteTask(e.target.parentElement.objectAssign);
+            console.log(e.target.parentElement.objectAssign);
         }
     }
 })

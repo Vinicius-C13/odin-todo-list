@@ -28,6 +28,7 @@ const Store = (() => {
     const deleteProject = (project) => {
         const projects = getProjects();
         projects.splice(_projectFindIndex(project), 1);
+        _deleteRelatedTasks(project.name);
         localStorage.setItem('projects', JSON.stringify(projects));
     }
 
@@ -94,6 +95,16 @@ const Store = (() => {
         let titles = doneTasks_array.map(task => task.title);
         let index = titles.findIndex(title => title == taskObj.title);
         return index;
+    }
+
+    const _deleteRelatedTasks = (projectName) => {
+        const tasks = getTasks();
+        tasks.forEach(task => {
+            if(task.projectID == projectName) {
+                deleteTask(task);
+            }
+        } )
+        UI.displayProjectList(getProjects()[0], Logic.filterTasks(getProjects()[0]));
     }
 
     return {getTasks, addTask, deleteTask, getProjects, addProject, getDoneTasks, addDoneTask, deleteDoneTask, changeToDoneList, changeToAllTasksList, deleteProject};
@@ -424,7 +435,6 @@ document.addEventListener('click', (e) => {
         } else {
             UI.removeTaskFromDisplay(e.target.parentElement);
             Store.deleteTask(e.target.parentElement.objectAssign);
-            console.log(e.target.parentElement.objectAssign);
         }
     }
 })

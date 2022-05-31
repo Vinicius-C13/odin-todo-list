@@ -421,3 +421,7 @@ input:checked {
     width: 65%;
     margin-right: 10%;
 }
+
+.delete-project-btn {
+    margin-left: 20px;
+}

@@ -3,7 +3,7 @@ const taskForm = `
         <div class="create-new--header">Create a new task<div id="close-form-btn"></div></div>
         <div class="create-new--content">
             <textarea class="create-new_input" id="new-todo--title" name="new-todo" placeholder="Title: Create a title" required></textarea>
-            <textarea class="create-new_input" id="new-todo--description" name="new-todo" placeholder="Details: Add a description" required></textarea>
+            <textarea class="create-new_input" id="new-todo--description" name="new-todo" placeholder="Details: Add a description"></textarea>
             <div class="create-new_date">
                 <label for="new-todo--date">Due Date:</label>
                 <input type="date" id="new-todo--date" name="new-todo" required>

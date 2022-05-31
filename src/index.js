@@ -401,6 +401,7 @@ document.addEventListener('click', (e) => {
         } else {
             UI.removeTaskFromDisplay(e.target.parentNode);
             Store.deleteTask(e.target.parentNode.objectAssign);
+            console.log(e.target.parentNode.objectAssign);
         }
     }
 })

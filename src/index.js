@@ -270,10 +270,8 @@ const UI = (() => {
     const displayProjectList = (project, array, status) => {
         const title = document.querySelector('.chosen-list-title');
         const details = document.querySelector('.project-details');
-        const header = document.querySelector('#header');
         title.textContent = project.name;
         details.textContent = project.details;
-        header.style.backgroundColor = project.color;
         _displayOnlyAddTaskButton(project, status);
         _displayFilteredTasks(array, status);
     };

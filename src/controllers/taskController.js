@@ -4,8 +4,17 @@ export const taskController = () => {
     const tasksList = [];
 
     const addTask = (id, title, description, dueDate, priority, projectId) => {
-        const task = taskFactory(title, description, dueDate, priority, projectId);
-        tasksList.push(task);
+        if(id === "") {
+            const task = taskFactory(title, description, dueDate, priority, projectId);
+            tasksList.push(task);
+            return;
+        }
+        const task = getTaskById(id);
+        task.setTitle(title);
+        task.setDescription(description);
+        task.setDueDate(dueDate);
+        task.setPriority(priority);
+        task.setProjectId(projectId);
     }
 
     const getTasksList = () => tasksList;
@@ -16,22 +25,13 @@ export const taskController = () => {
     const getTasksByProjectId = (projId) =>
         tasksList.filter(task => task.getProjectId() === projId)
 
-    const updateTask = (id, title, description, dueDate, priority, projectId) => {
-        const task = getTaskById(id);
-        task.setTitle(title);
-        task.setDescription(description);
-        task.setDueDate(dueDate);
-        task.setPriority(priority);
-        task.setProjectId(projectId);
-    }
-
     const deleteTask = (taskId) => {
         const taskIndex = tasksList.findIndex(task => task.getId() === taskId);
         tasksList.splice(taskIndex, 1);
     }
 
     return {
-        addTask, getTasksList,getTaskById, getTasksByProjectId, updateTask, deleteTask
+        addTask, getTasksList,getTaskById, getTasksByProjectId, deleteTask
     }
 
 }
